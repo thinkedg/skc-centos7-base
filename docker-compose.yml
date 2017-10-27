@@ -1,1 +1,10 @@
 ---
+
+version: '3'
+services:
+
+  skccentos:
+    build: skc-centos7
+
+    image: skc-centos7-base
+    

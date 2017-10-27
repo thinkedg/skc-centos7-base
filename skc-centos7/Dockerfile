@@ -6,3 +6,9 @@ RUN yum update -y && \
     yum clean all
 
 # install Packages
+RUN yum install -y which && \
+    yum install -y sudo  && \
+    yum install -y rpm-build && \
+    yum clean all
+
+
