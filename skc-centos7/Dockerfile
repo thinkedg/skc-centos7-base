@@ -27,3 +27,6 @@ RUN echo 'insecure' >> /root/.curlrc && \
     yum clean all
 
 
+
+
+
