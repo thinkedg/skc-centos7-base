@@ -1,32 +1,40 @@
 FROM centos:centos7
 MAINTAINER Stephen K Conklin <stephen@thinkedg.com>
 
+
+
+ENV container=docker
+VOLUME /run /tmp
+
+
 # update and clean
 RUN yum update -y && \
     yum clean all
+
+
+RUN yum -y install systemd; yum clean all; \
+(cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
 
 # install Packages
 RUN yum install -y which && \
     yum install -y sudo  && \
     yum install -y rpm-build && \
     yum install -y emacs && \
+    yum install -y tree && \
+    yum install -y wget && \
+    yum install -y openssl && \
+    yum groupinstall -y 'Development Tools' && \
     yum clean all
 
-# install Python3
-RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm && \
-    yum update -y && \
-    yum install -y python35u python35u-libs python35u-devel python35u-pip && \
-    yum clean all
+RUN echo 'check_certificate = off' > /root/.wgetrc
 
-RUN ln -s /usr/bin/python3.5 /usr/bin/python3
-
-# install ruby
-RUN echo 'insecure' >> /root/.curlrc && \
-    gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB && \
-    \curl -sSL https://get.rvm.io | bash -s stable --ruby && \
-    yum clean all
-
-
-
+CMD /usr/sbin/init
 
 
